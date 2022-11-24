@@ -1,0 +1,96 @@
+composer create-project laravel/laravel laravel-api
+
+php artisan sail:install
+
+./vendor/bin/sail up
+
+depends_on:
+    - mysql
+    - phpmyadmin
+
+phpmyadmin:
+    image: 'phpmyadmin:latest'
+    ports:
+        - 9000:80
+    networks:
+        - sail
+    environment:
+        - PMA_ARBITRARY=1
+
+./vendor/bin/sail up
+
+
+http://localhost/
+http://localhost:9000/
+
+composer require laravel/sanctum
+
+./vendor/bin/sail artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+
+SANCTUM_STATEFUL_DOMAINS=localhost:8080
+SPA_URL=http://localhost:8080
+SESSION_DOMAIN=localhost
+
+
+composer require laravel/fortify
+
+./vendor/bin/sail artisan vendor:publish --provider="Laravel\Fortify\FortifyServiceProvider"
+
+
+composer require laravel/telescope
+
+sail artisan telescope:install
+
+sail artisan migrate
+
+./vendor/bin/sail artisan migrate
+
+
+cors.php
+'paths' => [
+      'api/*',
+      'login',
+      'logout',
+      'register',
+      'user/password',
+      'forgot-password',
+      'reset-password',
+      'sanctum/csrf-cookie',
+      'user/profile-information',
+      'email/verification-notification',
+],
+'supports_credentials' => true,
+
+\Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+
+
+fortiy.php
+'home' => env('SPA_URL') . '/dashboard',
+'views' => false,
+
+config/app.php
+    App\Providers\FortifyServiceProvider::class,
+
+
+
+
+routes
+
+user
+public function isAdmin(): bool
+    {
+      return true; // $this->is_admin;
+    }
+
+Controllers
+
+
+Middleware
+
+autenticate
+
+if (! $request->expectsJson()) {
+            return url(env('SPA_URL') . '/login');
+        }
+
+redirect if authenticated
